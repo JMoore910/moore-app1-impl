@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="baseline.FXMLController">
+   <children>
+      <Text fx:id="currentDate" strokeType="OUTSIDE" strokeWidth="0.0" text="(Get Today's Date from Method)">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
+      <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0" spacing="10.0">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@pic1.png" />
+               </image>
+            </ImageView>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Jeanne's First Todo List Application ">
+               <font>
+                  <Font size="48.0" />
+               </font>
+            </Text>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@pic2.jpg" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+      <HBox prefHeight="25.0" prefWidth="200.0" spacing="20.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Item name and Date: " />
+            <TextField fx:id="itemNameField" promptText="&lt;Item Name&gt;" />
+            <TextField fx:id="itemDateField" promptText="&lt;YYYY-MM-DD&gt;" />
+            <TextField fx:id="itemDescField" promptText="&lt;Short Description&gt;" />
+            <Button fx:id="addItemButton" alignment="CENTER" mnemonicParsing="false" text="Add Item">
+               <HBox.margin>
+                  <Insets left="190.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="editItemButton" mnemonicParsing="false" text="Edit Item" />
+         </children>
+         <padding>
+            <Insets left="10.0" />
+         </padding>
+      </HBox>
+      <ToolBar nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="600.0">
+        <items>
+          <Button fx:id="changeViewCurrentButton" mnemonicParsing="false" onAction="#ViewCurrent" text="   Current  " />
+            <Button fx:id="changeViewCompletedButton" mnemonicParsing="false" onAction="#viewCompleted" text="Completed" />
+            <Button fx:id="changeViewAllButton" mnemonicParsing="false" onAction="#viewAll" prefHeight="25.0" prefWidth="77.0" text="All Items" />
+        </items>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </ToolBar>
+      <GridPane alignment="CENTER" prefHeight="20.0" prefWidth="621.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="To Do" GridPane.halignment="CENTER">
+               <font>
+                  <Font size="21.0" />
+               </font>
+            </Text>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Due Date" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+               <font>
+                  <Font size="21.0" />
+               </font>
+            </Text>
+         </children>
+      </GridPane>
+      <ListView fx:id="toDoList" prefHeight="200.0" prefWidth="200.0" />
+      <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+         <children>
+            <DialogPane fx:id="descriptionPane" contentText="NOT SELECTED YET" headerText="        Item Description" />
+            <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="700.0" spacing="20.0">
+               <children>
+                  <HBox prefHeight="100.0" prefWidth="400.0">
+                     <children>
+                        <Button fx:id="removeButton" alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="Remove Item" />
+                     </children>
+                  </HBox>
+                  <CheckBox fx:id="completedCheckBox" mnemonicParsing="false" text="Item Completed">
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding>
+                  </CheckBox>
+                  <Button fx:id="applyChangesButton" mnemonicParsing="false" text="Apply Changes" />
+               </children>
+               <padding>
+                  <Insets right="55.0" />
+               </padding>
+            </HBox>
+         </children>
+      </HBox>
+      <VBox prefHeight="100.0" prefWidth="1161.0">
+         <children>
+            <HBox prefHeight="30.0" prefWidth="1200.0" spacing="20.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Enter text file name to load or save list to" />
+                  <TextField fx:id="fileNameField" prefHeight="25.0" prefWidth="181.0" promptText="&lt;filename.txt&gt;" />
+                  <Button fx:id="loadButton" mnemonicParsing="false" text="Load" />
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Check Boxes for which list to save" />
+                  <CheckBox fx:id="saveToDoCheckBox" mnemonicParsing="false" text="To do list" />
+                  <CheckBox fx:id="saveCompletedCheckBox" mnemonicParsing="false" text="Completed to do list" />
+                  <Button fx:id="saveButton" mnemonicParsing="false" text="Save" />
+               </children>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="COP3330 Fall 2021 Application Assignment 1 Design" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="©Copyright 2021 Jeanne Moore" />
+   </children>
+</VBox>
