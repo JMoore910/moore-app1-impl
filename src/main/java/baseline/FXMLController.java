@@ -18,9 +18,31 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 
+
+//Changes to make!
+//  Make only one list
+//  List must have the capacity to store at least 100 item
+//  Item Description must be between 1 and 256 chars in length
+//  Due Date shall be optional (if user adds item without a due date, put it at the head of the list)
+//  If so, check to see if the due date follows the format of YYYY-MM-DD
+//
+//  Functionality
+//      Add item to list
+//      Remove item from list
+//      Clear all items from list
+//      Edit the description or due date of an item
+//      A user shall be able to mark an item in the list as either complete or incomplete
+//      Display all existing items, only current items, or only completed items
+
+//      Functionality to add:
+//      A clear all button: Opens a pop up warning user they are about to delete all items, Both complete and incomplete, from the list
+//      Add a JavaFX file and FXML Controller for a new scene - user confirmation window
+
+
 public class FXMLController {
     //  four lists declared, one to hold current todos, one to hold completed todos, one to hold queued completed todos
-    private final ObservableList<ObservableList<String>> todos = FXCollections.observableArrayList();
+    private final List<ToDoClass> todos = new ArrayList<>();
+
     //  ObservableList tempCompleted
     //  Use the fourth list to track which list to look at. By default set to todos at start
     //  ObservableList view = todos.get(0);
@@ -28,19 +50,15 @@ public class FXMLController {
     //  ToDoClass selected = new ToDoClass();
 
     public void initLists() {
-        ObservableList<String> current = FXCollections.observableArrayList();
-        ObservableList<String> complete = FXCollections.observableArrayList();
-        for (int i = 1; i <= 256; i++) {
+        for (int i = 1; i <= 100; i++) {
             //  Proper formatting will be required when implementing ToDoList objects
             //  For now, List is of type String and each element is as follows for
             //  presentation purposes:
-
-
-            current.add(String.format("%s%200s", "todo " + i, "todo date " + i));
-            complete.add(String.format("%s%200s","completed todo" + i,"completed date "+i));
+            todos.add(new ToDoClass("Todo " + i, "Date " + i,"Todo desc "+ i));
         }
-        todos.add(current);
-        todos.add(complete);
+        for (int i = 1; i <= 100; i++) {
+            todos.add(new ToDoClass("Complete Todo " + i, "Date " + i,"Todo desc "+ i));
+        }
     }
 
     @FXML
@@ -57,6 +75,9 @@ public class FXMLController {
 
     @FXML
     private Button changeViewAllButton;
+
+    @FXML
+    private Button clearListButton;
 
     @FXML
     private Button changeViewCompletedButton;
@@ -107,23 +128,32 @@ public class FXMLController {
     private ListView<String> toDoList;
     // Will be of type ToDoClass after implementation
 
+    private ToDoClass searchList(String search) {
+        for (ToDoClass item : todos) {
+            if (search.trim().matches(item.getToDoName())) {
+                return item;
+            }
+        }
+        return new ToDoClass("NoItem", "NoDate", "NotFound ");
+    }
 
-    //  ToDo - Create a method: public void removeItem(ToDoClass item, ObservableList<ToDoClass> list)
+
+    //  ToDo - Create a method: public void removeItem(ToDoClass item)
     //      remove button function feeds selected list and item to method
     //      method searches the list for the item then removes it
 
 
-    //  ToDo - Create a method: public void addItem(ToDoClass item, ObservableList<ToDoClass> list)
+    //  ToDo - Create a method: public void addItem(ToDoClass item)
     //      the text inside of the fields is added to a new ToDoList object
     //      the text inside of the fields is cleared
     //      the list is updated, then sorted by item date
     //      clear the toDoList and set its items to be the list
 
 
-    //  ToDo - Create a method: public boolean checkItemIsCompleted(ToDoClass item, ObservableList<ToDoClass> list)
+    //  ToDo - Create a method: public boolean checkItemIsCompleted(ToDoClass item)
     //      this method has been called if the user selects an item in the list
-    //      The method checks if the item is already in the temp completed list
-    //      Method loops through every element and compares it to item
+    //      The method checks if the item is already in the bounds of completed items in the list
+    //      Method loops through every element in the completed bounds and compares it to item
     //      if item is found, return true
 
 
@@ -238,14 +268,23 @@ public class FXMLController {
         //  This logic is vital to express the fact that a list is being presented
         //  i is used to represent the list's capacity to reach at least 256 items
         initLists();
-        toDoList.setItems(todos.get(0));
+        ObservableList<String> todoNames = FXCollections.observableArrayList();
+        for (ToDoClass item : todos) {
+            todoNames.add(item.getToDoName() + String.format("%200s",":")  + item.getToDoDate());
+        }
+        toDoList.setItems(todoNames);
         //  get selection of an item in a list
         toDoList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     //  In the future, each object of list will have its own description as a String variable.
                     //  For now, description is just the first 20 characters of the selected item
+                    //  When an item is selected, the list is then searched for that item
 
-                    descriptionPane.setContentText(toDoList.getSelectionModel().getSelectedItem().substring(0,20));
+
+                    //  Current problem: The list is displaying
+
+
+                    descriptionPane.setContentText(searchList(Arrays.asList(toDoList.getSelectionModel().getSelectedItem().split(":")).get(0)).getToDoDesc());
                     //  set getSelectedItem to be selectedItem
                     //  setCurrentDate(); to change text at top to say current date
                     //  check if the item is in the temp completed list. If so, autofill the checkbox

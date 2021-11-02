@@ -97,9 +97,10 @@
             <DialogPane fx:id="descriptionPane" contentText="NOT SELECTED YET" headerText="        Item Description" />
             <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="700.0" spacing="20.0">
                <children>
-                  <HBox prefHeight="100.0" prefWidth="400.0">
+                  <HBox prefHeight="100.0" prefWidth="400.0" spacing="20.0">
                      <children>
                         <Button fx:id="removeButton" alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="Remove Item" />
+                        <Button fx:id="clearListButton" mnemonicParsing="false" text="Clear List" />
                      </children>
                   </HBox>
                   <CheckBox fx:id="completedCheckBox" mnemonicParsing="false" text="Item Completed">
