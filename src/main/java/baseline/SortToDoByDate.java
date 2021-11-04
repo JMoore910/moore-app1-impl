@@ -5,22 +5,34 @@ package baseline;
  *  Copyright 2021 Jeanne Moore
  */
 
+import javafx.collections.ObservableList;
+
+import java.util.Collections;
+import java.util.List;
+
+import static java.lang.Integer.parseInt;
+
 public class SortToDoByDate {
-    //  ToDo - Create method: void sortToDoByDate(ObservableList<ToDoClass> list)
-    //      sortToDoByDate sorts an observable list by the date
-    //      by way of selection sort
-    //      enter a for loop (int i = 0; i < list.size(); i++)
-    //          ToDoClass first = list.get(i);
-    //          enter a nested for loop (int j = i; j < list.size(); j++)
-    //              if the year of current first is greater than the year of the item at j,
-    //                  swap the two
-    //              else if the year of current first equals the year of the item at j,
-    //                  move to look at month
-    //                  if the month of the current first is greater,
-    //                      swap the two
-    //                  else if the months are equal,
-    //                      move to look at day
-    //                      if the day of the current is greater,
-    //                          swap the two
-    //              the result is the list is sorted via selection sort
+    public void sortToDoByDate(List<ToDoClass> list) {
+        //  sortToDoByDate sorts an observable list by the date
+        //  by way of selection sort
+        int todosSize = list.size();
+        for (int i = 0; i < list.size(); i++) {
+            ToDoClass first = list.get(i);
+            //  if an item is marked complete, swap it with the last item in the list
+            if (first.getCompleted() && i < todosSize) {
+                Collections.swap(list, i, todosSize - 1);
+                todosSize--;
+            }
+            for (int j = i; j < todosSize; j++) {
+                int tempFirst = parseInt(first.getToDoDate().replace("-",""));
+                int tempItemJ = parseInt(list.get(j).getToDoDate().replace("-",""));
+                //  if the year of current first is greater than the year of the item at j,
+                if (tempFirst > tempItemJ) {
+                    Collections.swap(list, i , j);
+                }
+            }
+            //  the result is the list is sorted via selection sort
+        }
+    }
 }

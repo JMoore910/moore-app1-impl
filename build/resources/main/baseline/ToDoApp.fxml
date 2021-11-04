@@ -49,7 +49,7 @@
             <TextField fx:id="itemNameField" promptText="&lt;Item Name&gt;" />
             <TextField fx:id="itemDateField" promptText="&lt;YYYY-MM-DD&gt;" />
             <TextField fx:id="itemDescField" promptText="&lt;Short Description&gt;" />
-            <Button fx:id="addItemButton" alignment="CENTER" mnemonicParsing="false" text="Add Item">
+            <Button fx:id="addItemButton" alignment="CENTER" mnemonicParsing="false" onAction="#add" text="Add Item">
                <HBox.margin>
                   <Insets left="190.0" />
                </HBox.margin>
@@ -99,11 +99,11 @@
                <children>
                   <HBox prefHeight="100.0" prefWidth="400.0" spacing="20.0">
                      <children>
-                        <Button fx:id="removeButton" alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="Remove Item" />
-                        <Button fx:id="clearListButton" mnemonicParsing="false" text="Clear List" />
+                        <Button fx:id="removeButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#remove" prefHeight="25.0" prefWidth="90.0" text="Remove Item" />
+                        <Button fx:id="clearListButton" mnemonicParsing="false" onAction="#clear" text="Clear List" />
                      </children>
                   </HBox>
-                  <CheckBox fx:id="completedCheckBox" mnemonicParsing="false" text="Item Completed">
+                  <CheckBox fx:id="completedCheckBox" mnemonicParsing="false" onAction="#checkBoxClicked" text="Item Completed">
                      <padding>
                         <Insets top="5.0" />
                      </padding>

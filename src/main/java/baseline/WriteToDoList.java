@@ -5,15 +5,23 @@ package baseline;
  *  Copyright 2021 Jeanne Moore
  */
 
+import javafx.collections.ObservableList;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class WriteToDoList {
-    //  ToDo - Create a method: void WriteToDoList(String fileName, ObservableList<ToDoClass> todos, ObservableList<ToDoClass> completed)
-    //      method opens a new file at fileName with a buffered writer
-    //      buffered writer prints to list
-    //      print: "current"
-    //      open for loop (int i = 0; i < todos.size(); i++)
-    //          print: toDoName toDoDate toDoDesc  for all elements in todos list
-    //      print: "complete"
-    //      open for loop (int i = 0; i < completed.size(); i++)
-    //      print: toDoName toDoDate toDoDesc  for all elements in completed list
-    //      close the buffered writer
+    public void writeToDoList(String fileName, ObservableList<ToDoClass> todos) {
+        //      method opens a new file at fileName with a buffered writer
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
+            for (ToDoClass item: todos) {
+                //  buffered writer prints list to file
+                //  print: toDoName toDoDate toDoDesc completed for all elements in todos list
+                bw.write(item.getToDoName() + ":" + item.getToDoDate() + ":" + item.getToDoDesc() + ":" + item.getCompleted() + "\n");
+            }
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+    }
 }

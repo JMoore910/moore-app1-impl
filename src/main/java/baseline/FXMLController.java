@@ -18,6 +18,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 
+import static java.lang.Integer.parseInt;
+
 
 //Changes to make!
 //  Make only one list
@@ -42,6 +44,7 @@ import javafx.scene.text.Text;
 public class FXMLController {
     //  four lists declared, one to hold current todos, one to hold completed todos, one to hold queued completed todos
     private final List<ToDoClass> todos = new ArrayList<>();
+    private final SortToDoByDate sorter = new SortToDoByDate();
 
     //  ObservableList tempCompleted
     //  Use the fourth list to track which list to look at. By default set to todos at start
@@ -54,10 +57,10 @@ public class FXMLController {
             //  Proper formatting will be required when implementing ToDoList objects
             //  For now, List is of type String and each element is as follows for
             //  presentation purposes:
-            todos.add(new ToDoClass("Todo " + i, "Date " + i,"Todo desc "+ i));
+            todos.add(new ToDoClass("Todo " + i, "Date " + i,"Todo desc "+ i,"incomplete"));
         }
         for (int i = 1; i <= 100; i++) {
-            todos.add(new ToDoClass("Complete Todo " + i, "Date " + i,"Todo desc "+ i));
+            todos.add(new ToDoClass("Complete Todo " + i, "Date " + i,"Todo desc "+ i,"completed"));
         }
     }
 
@@ -134,20 +137,26 @@ public class FXMLController {
                 return item;
             }
         }
-        return new ToDoClass("NoItem", "NoDate", "NotFound ");
+        return new ToDoClass("NoItem", "NoDate", "NotFound ","incomplete");
     }
 
 
-    //  ToDo - Create a method: public void removeItem(ToDoClass item)
-    //      remove button function feeds selected list and item to method
-    //      method searches the list for the item then removes it
+    public void removeItem(ToDoClass item) {
+        for (ToDoClass todo : todos) {
+            if (item.getToDoName().matches(todo.getToDoName())) {
+                todos.remove(item);
+            }
+        }
+    }
 
 
-    //  ToDo - Create a method: public void addItem(ToDoClass item)
-    //      the text inside of the fields is added to a new ToDoList object
-    //      the text inside of the fields is cleared
-    //      the list is updated, then sorted by item date
-    //      clear the toDoList and set its items to be the list
+    public void addItem(ToDoClass item) {
+        //      the list is updated, then sorted by item date
+        todos.add(item);
+        sorter.sortToDoByDate(todos);
+        //      clear the toDoList and set its items to be the list
+        resetListView();
+    }
 
 
     //  ToDo - Create a method: public boolean checkItemIsCompleted(ToDoClass item)
@@ -157,85 +166,115 @@ public class FXMLController {
     //      if item is found, return true
 
 
-    //  @FXML - Create a method: void applyChanges(ActionEvent event)
-    //      method effectively removes each item in the temp completed list from the current todos,
-    //      then it adds each of those items to the completed list
-    //      and clears the temp completed list
-    //      once an item has been marked and applied as finished, there is no way to remove it from
-    //      the completed list other than by clearing the list entirely.
+    @FXML void applyChanges(ActionEvent event) {
+        //      method searches for items in completed
+        //      and clears the temp completed list
+        //      once an item has been marked and applied as finished, there is no way to remove it from
+        //      the completed list other than by clearing the list entirely.
+    }
 
 
-    //  @FXML - Create a method: void itemCompleted(ActionEvent event)
-    //      User is not allowed to check an item a second time, if an item has already been checked,
-    //      the checkbox will be checked already
-    //      when the checkbox is filled, first check to see if an item has been selected by user
-    //          if so, add the item to the temp completed list
+    @FXML void checkBoxClicked(ActionEvent event) {
+        //  if the checkbox is clicked,
+        //  todos is then searched for the item, which is returned as a ToDoClass object
+        toDoList.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    String search = toDoList.getSelectionModel().getSelectedItem();
+                    //  this method splits and trims to get the name of the item
+                    ToDoClass item = searchList(Arrays.asList(search.split(":")).get(0).trim());
+                    int index = todos.indexOf(item);
+                    //  item's completed value is changed to be the opposite value then it is set back into the list at the same element
+                    item.setCompleted(!item.getCompleted());
+                    todos.set(index, item);
+                    //  then sort todos and reset listView
+                    sorter.sortToDoByDate(todos);
+                    resetListView();
+                }
+        );
+    }
+
+    @FXML void remove(ActionEvent event) {
+        //      get selected item
+        //  todos is then searched for the item, which is returned as a ToDoClass object
+        toDoList.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    String search = toDoList.getSelectionModel().getSelectedItem();
+                    //  this method splits and trims to get the name of the item
+                    ToDoClass item = searchList(Arrays.asList(search.split(":")).get(0).trim());
+                    //  Call to helper function
+                    removeItem(item);
+                }
+        );
+    }
 
 
-    //  @FXML - Create a method: void remove(ActionEvent event)
-    //      get viewed list inside list of lists
-    //      get selected item
-    //      if an item was selected
-    //          removeItem(selectedItem, list)
+    @FXML void add(ActionEvent event) {
+        String name = itemNameField.getText();
+        String date = itemDateField.getText();
+        String desc = itemDescField.getText();
+        //  Check that date follows format
+        List<String> dateCheck = new ArrayList<>(Arrays.asList(date.split("-")));
+        if ((dateCheck.size() == 3) && (parseInt(dateCheck.get(0)) <= 9999) && (parseInt(dateCheck.get(1)) <= 12)
+                && (parseInt(dateCheck.get(2)) <= 31) && (!name.isEmpty() && !date.isEmpty() && !desc.isEmpty())) {
+                //      if any fields (name,date,desc) are blank,
+                desc = (String.format("%1.256s", desc));
+                addItem(new ToDoClass(name,date,desc,"incomplete"));
+        }
+    }
 
 
-    //  @FXML - Create a method: void add(ActionEvent event)
-    //      if any fields (name,date,desc) are blank,
-    //          return
-    //      else
-    //          addItem(Item)
+    @FXML void clear(ActionEvent event) {
+        todos.clear();
+        resetListView();
+    }
 
 
-    //  @FXML - Create a method: void remove(ActionEvent event)
-    //      method gets selected item and list, then feeds it into removeItem method
-    //      removeItem(selectedItem, view)
+
+    @FXML void edit(ActionEvent event) {
+        //      get name, description and date fields
+        //      if something is blank, do not change that one
+        //      if name field is empty, return
+        //      search both lists for the selected item,
+        //      when found,
+        //      check if the description is blank
+        //          if so, set it to the edit field
+        //      check if the date is blank
+        //          if so, set it to the edit field
+        //      Clear both edit fields
+        //      Call to the list it was found in by date
+    }
 
 
-    //  @FXML - Create a method: void uncheckComplete(ActionEvent event)
-    //      remove selected item from temp completed list
+    @FXML void saveList(ActionEvent event) {
+        //      get fileName from filename text field
+        //      if fileName is blank, do nothing
+        //      else if fileName does not end with .txt, do nothing
+        //      else
+        //          make a new WriteToDoList object
+        //          if todos checkbox was clicked
+        //              if completed checkbox was clicked
+        //                  writeToDoList(fileName,todos,completed)
+        //              else
+        //                  writeToDoList(fileName,todos, blank list)
+        //          else if completed checkbox was clicked
+        //              writeToDoList(fileName, blank list, todos)
+    }
 
 
-    //  @FXML - Create a method: void edit(ActionEvent event)
-    //      get name, description and date fields
-    //      if something is blank, do not change that one
-    //      if name field is empty, return
-    //      search both lists for the selected item,
-    //      when found,
-    //      check if the description is blank
-    //          if so, set it to the edit field
-    //      check if the date is blank
-    //          if so, set it to the edit field
-    //      Clear both edit fields
-    //      Call to the list it was found in by date
+    @FXML void loadList(ActionEvent event) {
+        //      get fileName from filename text field
+        //      if fileName is blank, do nothing
+        //      else if fileName does not end with .txt, do nothing
+        //      else
+        //              make new ReadToDoList object
+        //              readToDoList(fileName, todos, completed)
+    }
 
 
-    //  @FXML - Create a method: void saveList(ActionEvent event)
-    //      get fileName from filename text field
-    //      if fileName is blank, do nothing
-    //      else if fileName does not end with .txt, do nothing
-    //      else
-    //          make a new WriteToDoList object
-    //          if todos checkbox was clicked
-    //              if completed checkbox was clicked
-    //                  writeToDoList(fileName,todos,completed)
-    //              else
-    //                  writeToDoList(fileName,todos, blank list)
-    //          else if completed checkbox was clicked
-    //              writeToDoList(fileName, blank list, todos)
-
-
-    //  @FXML - Create a method: void loadList(ActionEvent event)
-    //      get fileName from filename text field
-    //      if fileName is blank, do nothing
-    //      else if fileName does not end with .txt, do nothing
-    //      else
-    //              make new ReadToDoList object
-    //              readToDoList(fileName, todos, completed)
-
-
-    //  @FXML - Create a method: void setCurrentDate()
-    //      get current date
-    //      currentDate.setText(formatted today's date)
+    @FXML void setCurrentDate() {
+        //      get current date
+        //      currentDate.setText(formatted today's date)
+    }
 
 
     @FXML
@@ -262,15 +301,34 @@ public class FXMLController {
         //  set view to be todos.get(0) + todos.get(1)  (current and completed todos)
     }
 
+    @FXML
+    void resetListView() {
+        ObservableList<String> todoNames = FXCollections.observableArrayList();
+        String complete;
+        for (ToDoClass item : todos) {
+            if (item.getCompleted())
+                complete = "complete";
+            else
+                complete = "incomplete";
+            todoNames.add(String.format("%40s",item.getToDoName()) + String.format("%200s",":")  + item.getToDoDate() + String.format("%10s",":"+complete));
+        }
+        toDoList.setItems(todoNames);
+    }
+
 
     //  Initialization of application
     public void initialize() {
         //  This logic is vital to express the fact that a list is being presented
         //  i is used to represent the list's capacity to reach at least 256 items
         initLists();
+        String complete;
         ObservableList<String> todoNames = FXCollections.observableArrayList();
         for (ToDoClass item : todos) {
-            todoNames.add(item.getToDoName() + String.format("%200s",":")  + item.getToDoDate());
+            if (item.getCompleted())
+                complete = "complete";
+            else
+                complete = "incomplete";
+            todoNames.add(String.format("%40s",item.getToDoName()) + String.format("%200s",":")  + item.getToDoDate() + String.format("%10s",":"+complete));
         }
         toDoList.setItems(todoNames);
         //  get selection of an item in a list

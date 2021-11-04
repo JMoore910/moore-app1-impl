@@ -12,11 +12,16 @@ public class ToDoClass {
     private String toDoName;
     private String toDoDate;
     private String toDoDesc;
+    private boolean completed;
 
-    public ToDoClass(String toDoName, String toDoDate, String toDoDesc){
+    public ToDoClass(String toDoName, String toDoDate, String toDoDesc, String completed){
         this.toDoDate = toDoDate;
         this.toDoName = toDoName;
         this.toDoDesc = toDoDesc;
+        if (completed.equals("completed"))
+            this.completed = true;
+        else
+            this.completed = false;
     }
 
     public String getToDoDate() {
@@ -31,6 +36,10 @@ public class ToDoClass {
         return toDoDesc;
     }
 
+    public boolean getCompleted() {
+        return completed;
+    }
+
     public void setToDoName(String toDoName) {
         this.toDoName = toDoName;
     }
@@ -41,5 +50,9 @@ public class ToDoClass {
 
     public void setToDoDesc(String toDoDesc) {
         this.toDoName = toDoDesc;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 }

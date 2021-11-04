@@ -5,15 +5,33 @@ package baseline;
  *  Copyright 2021 Jeanne Moore
  */
 
-public class ReadToDoList {
-    //  ToDo - Create a method: void ReadToDoList(String fileName, ObservableList<ToDoClass> todos, ObservableList<ToDoClass> complete)
-    //      if no file is found at the specified fileName,
-    //          print: the file you specified is incorrect
-    //          return new ObservableList<String>() which is empty
-    //      method calls a buffered reader to read a ToDoList text file
-    //      each line of the text file is made up of a ToDoName, a ToDoDate, and a ToDoDesc,
-    //      separated by spaces.
-    //      the buffered reader reads each line to a list of Strings
-    //      then,
+import javafx.collections.ObservableList;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class ReadToDoList {
+    public void readToDoList(String fileName, ObservableList<ToDoClass> todos) throws IOException {
+        //  Only run operations if the file exists
+        if (new File(fileName).isFile()) {
+            //  method calls a buffered reader to read a ToDoList text file
+            try (BufferedReader br = new BufferedReader(new FileReader(fileName))){
+                //  each line of the text file is made up of a ToDoName, a ToDoDate, and a ToDoDesc,
+                //  separated by colons.
+                String newLine = br.readLine();
+                while (newLine != null) {
+                    //  the buffered reader reads each line to a list of Strings
+                    //  then the elements of that list are added to a new object in the todos list
+                    List<String> newList = new ArrayList<>(Arrays.asList(newLine.split(":")));
+                    todos.add(new ToDoClass(newList.get(0),newList.get(1),newList.get(2),newList.get(3)));
+                    newLine = br.readLine();
+                }
+            }
+            //  Once all items have been read in and added to list, call to sort it with SortToDoByDate
+            SortToDoByDate sorter = new SortToDoByDate();
+            sorter.sortToDoByDate(todos);
+        }
+    }
 }
