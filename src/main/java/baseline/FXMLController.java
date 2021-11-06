@@ -5,14 +5,11 @@ package baseline;
  *  Copyright 2021 Jeanne Moore
  */
 
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,34 +19,12 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
-import static java.lang.Integer.parseInt;
-
-
-//Changes to make!
-//  Make only one list
-//  List must have the capacity to store at least 100 item
-//  Item Description must be between 1 and 256 chars in length
-//  Due Date shall be optional (if user adds item without a due date, put it at the head of the list)
-//  If so, check to see if the due date follows the format of YYYY-MM-DD
-//
-//  Functionality
-//      Add item to list
-//      Remove item from list
-//      Clear all items from list
-//      Edit the description or due date of an item
-//      A user shall be able to mark an item in the list as either complete or incomplete
-//      Display all existing items, only current items, or only completed items
-
-//      Functionality to add:
-//      A clear all button: Opens a pop up warning user they are about to delete all items, Both complete and incomplete, from the list
-//      Add a JavaFX file and FXML Controller for a new scene - user confirmation window
-
 
 public class FXMLController implements Initializable {
     private final ObservableList<String> toDoNames = FXCollections.observableArrayList();
     //  One list storing class "ToDoList" stores all data within a list
-    private final ToDoList todos = new ToDoList();
-    private final String incomp = "incomplete";
+    private final String listViewFormat = "%35s%50s%50s";
+    private ToDoList todos = new ToDoList();
     private int selectedIndex = 0;
 
     @FXML
@@ -59,7 +34,10 @@ public class FXMLController implements Initializable {
     private URL location;
 
     @FXML
-    private Button addItemButton;
+    private Button addButton;
+
+    @FXML
+    private Button editButton;
 
     @FXML
     private Button changeViewAllButton;
@@ -74,6 +52,9 @@ public class FXMLController implements Initializable {
     private Button changeViewCurrentButton;
 
     @FXML
+    private Button sortButton;
+
+    @FXML
     private Button loadButton;
 
     @FXML
@@ -86,25 +67,19 @@ public class FXMLController implements Initializable {
     private CheckBox completedCheckBox;
 
     @FXML
-    private CheckBox saveCompletedCheckBox;
-
-    @FXML
-    private CheckBox saveToDoCheckBox;
-
-    @FXML
     private Text currentDate;
 
     @FXML
     private DialogPane descriptionPane;
 
     @FXML
-    private Button editItemButton;
+    private DatePicker itemDate;
+
+    @FXML
+    private TextField filePathField;
 
     @FXML
     private TextField fileNameField;
-
-    @FXML
-    private DatePicker itemDate;
 
     @FXML
     private TextField itemDescField;
@@ -144,11 +119,13 @@ public class FXMLController implements Initializable {
     @FXML void remove(ActionEvent event) {
         //      get selected item
         //  todos is then searched for the item, which is returned as a ToDoClass object
-        if ((selectedIndex != -1) && (todos.getList().isEmpty())) {
+        if ((selectedIndex != -1) && (!todos.getList().isEmpty())) {
             //  Remove selected item from todos and the listView
             todos.setList(todos.removeItem(todos.getList(),selectedIndex));
-            listView.getSelectionModel().select(selectedIndex - 1);
             listView.getItems().remove(selectedIndex);
+            selectedIndex --;
+            listView.getSelectionModel().select(selectedIndex);
+            listView.refresh();
         }
     }
 
@@ -162,8 +139,14 @@ public class FXMLController implements Initializable {
         String desc = itemDescField.getText();
         itemNameField.clear();
         itemDescField.clear();
-        ToDoClass item = new ToDoClass(name,itemDate.getValue(),desc,false);
+        ToDoClass item = new ToDoClass(
+                name,
+                itemDate.getValue(),
+                desc,
+                false
+        );
         if (!desc.isEmpty() && !name.isEmpty()) {
+            //  format description to be less than 256 characters
             desc = (String.format("%1.256s", desc));
             //  add item to todos list
             item.setToDoDesc(desc);
@@ -174,9 +157,25 @@ public class FXMLController implements Initializable {
     }
 
 
+    @FXML void sort(ActionEvent event) {
+        //  Method calls on hitting sort button
+        //  First clear Observable List
+        toDoNames.clear();
+        //  Then perform sort method twice
+        //  Sort method moves all completed items to the end
+        //  and then sorts items by way of selection sort
+        todos.sortToDoByDate();
+        todos.sortToDoByDate();
+        //  refill Observable List after sorting
+        todos.fillNamesList(toDoNames,todos);
+        listView.refresh();
+    }
+
+
     @FXML void clear(ActionEvent event) {
-        //Call a method within ToDoList class to clear its list
+        //  Call a method within ToDoList class to clear its list
         todos.clearList();
+        //  Clear Observable List
         toDoNames.clear();
         listView.refresh();
     }
@@ -192,38 +191,40 @@ public class FXMLController implements Initializable {
         itemDescField.clear();
         //  search both lists for the selected item,
         ToDoClass item = todos.searchList(name);
-        todos.editItem(todos.getList(), new ToDoClass(name,date,desc,item.getCompleted()), todos.getList().indexOf(item));
-        resetListView();
+        //  To edit item, send in both new and old items to make sure method knows to edit
+        todos.editItem(
+                todos.getList(),
+                item,
+                new ToDoClass(name,date,desc, item.getCompleted()),
+                todos.getList().indexOf(item)
+        );
+        listView.refresh();
     }
 
 
     @FXML void saveList(ActionEvent event) {
         //  get fileName from filename text field
-        String fileName = fileNameField.getText();
-        System.out.println(fileName);
+        String fileName = filePathField.getText() + fileNameField.getText();
         //  Make sure user did not specify a text file name
-        if (!fileName.contains(".")) {
+        if (fileName.endsWith(".txt")) {
             //  Make a new WriteToDoList object
-            fileName = "docs//" + fileName + ".txt";
             WriteToDoList writer = new WriteToDoList();
             writer.writeToDoList(fileName,todos);
-            resetListView();
         }
     }
 
 
-    @FXML void loadList(ActionEvent event) throws IOException {
+    @FXML void loadList(ActionEvent event) {
         //  get fileName from filename text field
-        String fileName = fileNameField.getText();
-        System.out.println(fileName);
+        String fileName = filePathField.getText() + fileNameField.getText();
         //  Make sure user did not specify a text file name
-        if (!fileName.contains(".")) {
-            System.out.println(fileName);
+        if (fileName.endsWith(".txt")) {
             //  Make a new ReadToDoList object
-            fileName = "docs//" + fileName + ".txt";
             ReadToDoList reader = new ReadToDoList();
-            reader.readToDoList(fileName,todos);
-            resetListView();
+            todos = new ToDoList(reader.readFromFile(fileName,todos).getList());
+            toDoNames.clear();
+            todos.fillNamesList(toDoNames,todos);
+            listView.refresh();
         }
     }
 
@@ -232,7 +233,6 @@ public class FXMLController implements Initializable {
         //      get current date
         LocalDate today = LocalDate.now();
         currentDate.setText(today.toString());
-        //      currentDate.setText(formatted today's date)
     }
 
 
@@ -244,8 +244,12 @@ public class FXMLController implements Initializable {
         String complete = "incomplete";
         for (ToDoClass i : todos.getList()) {
             if (!i.getCompleted()) {
-                toDoNames.add(String.format("%40s", i.getToDoName()) + String.format("%200s", ":") +
-                        i.getToDoDate() + String.format("%50s", ":" + complete));
+                toDoNames.add(String.format(
+                        listViewFormat,
+                        i.getToDoName(),
+                        ":" + i.getToDoDate(),
+                        ":" + complete)
+                );
             }
         }
         listView.refresh();
@@ -259,8 +263,12 @@ public class FXMLController implements Initializable {
         String complete = "completed";
         for (ToDoClass i : todos.getList()) {
             if (i.getCompleted()) {
-                toDoNames.add(String.format("%40s", i.getToDoName()) + String.format("%200s", ":") +
-                        i.getToDoDate() + String.format("%50s", ":" + complete));
+                toDoNames.add(String.format(
+                        listViewFormat,
+                        i.getToDoName(),
+                        ":" + i.getToDoDate(),
+                        ":" + complete)
+                );
             }
         }
         listView.refresh();
@@ -275,33 +283,16 @@ public class FXMLController implements Initializable {
         listView.refresh();
     }
 
-
-    public void resetListView() {
-
-        toDoNames.removeAll();
-        String complete;
-        for (ToDoClass item : todos.getList()) {
-            System.out.println(item.getToDoDate());
-            if (item.getCompleted())
-                complete = "complete";
-            else
-                complete = "incomplete";
-
-            toDoNames.add(String.format("%40s", item.getToDoName()) + String.format("%200s", ":") + item.getToDoDate() + String.format("%50s", ":" + complete));
-            listView.refresh();
-        }
-    }
-
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //  Set a default value for the DatePicker
-
         listView.setItems(toDoNames);
         setCurrentDate();
-        itemDate.setValue(LocalDate.of(2021,11,1));
+        itemDate.setValue(LocalDate.now());
         //  Check if each item is completed or not
-
-
     }
 }
+
+
+//  Create a custom adaptor for setting layout of listview
+//public class listAdapter extends ArrayAdapter

@@ -18,6 +18,7 @@ public class ToDoListApplication extends javafx.application.Application {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ToDoApp.fxml")));
 
         Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("stylesheet1.css").toExternalForm());
         stage.setTitle("To Do List");
         stage.setScene(scene);
         stage.show();

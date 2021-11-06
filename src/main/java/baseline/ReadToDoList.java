@@ -5,7 +5,6 @@ package baseline;
  *  Copyright 2021 Jeanne Moore
  */
 
-import javafx.collections.ObservableList;
 import static java.lang.Integer.parseInt;
 import java.io.*;
 import java.time.LocalDate;
@@ -13,42 +12,42 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class ReadToDoList {
-    public ToDoList readToDoList(String fileName, ToDoList todos) throws IOException {
-        fileName = "docs//" + fileName;
-        File file = new File(fileName);
-        //  Only run operations if the file exists
-        System.out.println("a");
-        if (file.exists()) {
-            System.out.println("b");
-            //  method calls a buffered reader to read a ToDoList text file
-            try (BufferedReader br = new BufferedReader(new FileReader(fileName))){
-                //  each line of the text file is made up of a ToDoName, a ToDoDate, and a ToDoDesc,
-                //  separated by colons.
-                boolean complete = false;
-                LocalDate date;
-                List<String> dateStr;
-                List<Integer> dateParsed = new ArrayList<>();
-                String newLine = br.readLine();
-                while (newLine != null) {
-                    System.out.println("x");
-                    //  the buffered reader reads each line to a list of Strings
-                    //  then the elements of that list are added to a new object in the todos list
-                    List<String> newList = new ArrayList<>(Arrays.asList(newLine.split(":")));
-                    dateStr = Arrays.asList(newList.get(1).split("-"));
-                    dateParsed.set(0,parseInt(dateStr.get(0)));
-                    dateParsed.set(1,parseInt(dateStr.get(1)));
-                    dateParsed.set(2,parseInt(dateStr.get(2)));
-                    date = LocalDate.of(dateParsed.get(0),dateParsed.get(1),dateParsed.get(2));
-                    if (newList.get(3).equals("completed"))
-                        complete = true;
-                    todos.addItem(todos.getList(), new ToDoClass(newList.get(0),date,newList.get(2),complete));
-                    newLine = br.readLine();
+    public ToDoList readFromFile(String fileName, ToDoList todos) {
+        fileName = fileName;
+        todos.getList().clear();
+        //  Create a list of Strings
+        List<String> list;
+        List<ToDoClass> tempList = new ArrayList<>();
+        //  Use variables to find parts of toDoClass items in file
+        String name;
+        LocalDate date;
+        String desc;
+        boolean completed;
+
+        //  Create a buffered reader in an automated try block
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String input = br.readLine();
+            while (input != null) {
+                list = new ArrayList<>(Arrays.asList(input.split(":")));
+                if (list.size() == 4){
+                    name = list.get(0);
+                    date = LocalDate.of(
+                            parseInt(Arrays.asList(list.get(1).split("-")).get(0)),
+                            parseInt(Arrays.asList(list.get(1).split("-")).get(1)),
+                            parseInt(Arrays.asList(list.get(1).split("-")).get(2)));
+                    desc = list.get(2);
+                    completed = list.get(3).equals("complete");
+                    //  add each line of the input file as a string element to the list
+                    tempList.add(new ToDoClass(name,date,desc,completed));
+                    input = br.readLine();
                 }
             }
-            //  Once all items have been read in and added to list, call to sort it with SortToDoByDate
-            todos.sortToDoByDate();
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
+        todos = new ToDoList(tempList);
         return todos;
     }
 }

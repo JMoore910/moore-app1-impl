@@ -12,12 +12,17 @@ import java.io.IOException;
 public class WriteToDoList {
     public void writeToDoList(String fileName, ToDoList todos) {
         fileName = "docs//" + fileName;
-        //      method opens a new file at fileName with a buffered writer
+        String completed;
+        //  method opens a new file at fileName with a buffered writer
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
             for (ToDoClass item: todos.getList()) {
+                if (item.getCompleted())
+                    completed = "completed";
+                else
+                    completed = "incomplete";
                 //  buffered writer prints list to file
                 //  print: toDoName toDoDate toDoDesc completed for all elements in todos list
-                bw.write(item.getToDoName() + ":" + item.getToDoDate() + ":" + item.getToDoDesc() + ":" + item.getCompleted() + "\n");
+                bw.write(item.getToDoName() + ":" + item.getToDoDate() + ":" + item.getToDoDesc() + ":" + completed + "\n");
             }
         } catch (IOException exception) {
             exception.printStackTrace();

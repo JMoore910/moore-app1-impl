@@ -1,9 +1,12 @@
 package baseline;
 
-import javafx.collections.FXCollections;
+/*
+ *  UCF COP3330 Fall 2021 Application Assignment 1 Solution
+ *  Copyright 2021 Jeanne Moore
+ */
+
 import javafx.collections.ObservableList;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,23 +57,23 @@ public class ToDoList {
         //  Helper method for adding an item
         //  the list is updated, then sorted
         list.add(item);
-        sortToDoByDate();
     }
 
-    public void editItem(List<ToDoClass> list, ToDoClass item, int index) {
+    public void editItem(List<ToDoClass> list, ToDoClass oldItem, ToDoClass newItem, int index) {
         //  Helper method for editing an item
         //  the list is updated then sorted
-        list.set(index, item);
-        sortToDoByDate();
+        if (list.contains(oldItem)) {
+            list.set(index, newItem);
+        }
     }
 
     public void markItemComplete(List<ToDoClass> list, ToDoClass item) {
         //  Helper method for marking an item complete
+        //  set item completed to be the inverse of what it is currently
         //  the list is updated then sorted
         int index = list.indexOf(item);
         item.setCompleted(!item.getCompleted());
         list.set(index, item);
-        sortToDoByDate();
     }
 
     public void clearList() {
@@ -81,40 +84,49 @@ public class ToDoList {
     public void sortToDoByDate() {
         //  sortToDoByDate sorts an observable list by the date
         //  by way of selection sort
-        int todosSize = list.size();
-        for (int i = 0; i < list.size(); i++) {
-            ToDoClass first = list.get(i);
-            //  if an item is marked complete, swap it with the last item in the list
-            if (first.getCompleted() && i < todosSize) {
-                Collections.swap(list, i, todosSize - 1);
-                todosSize--;
-            }
-            for (int j = i; j < todosSize; j++) {
-                int tempFirst = parseInt("" + (first.getToDoDate().getYear()) + (first.getToDoDate().getMonthValue()) + (first.getToDoDate().getDayOfMonth()));
-                int tempItemJ = parseInt("" + (list.get(j).getToDoDate().getYear()) + (list.get(j).getToDoDate().getMonthValue()) + (list.get(j).getToDoDate().getDayOfMonth()));
-                //  if the year of current first is greater than the year of the item at j,
-                if (tempFirst > tempItemJ) {
-                    Collections.swap(list, i, j);
+            int todosSize = list.size();
+            for (int i = 0; i < list.size(); i++) {
+                ToDoClass first = list.get(i);
+                //  if an item is marked complete, swap it with the last item in the list
+                if (first.getCompleted()) {
+                    while (i < todosSize) {
+                        if (!list.get(todosSize - 1).getCompleted()) {
+                            Collections.swap(list, i, todosSize - 1);
+                            todosSize--;
+                            break;
+                        }
+                        todosSize--;
+                    }
+                }
+                //  Call second helper function to run selection sort
+                for (int j = i + 1; j < todosSize; j++) {
+                    selectionSortByDate(i, j, first, list.get(j));
                 }
             }
-            //  the result is the list is sorted via selection sort
-        }
+            //  the result is a list sorted via selection sort
     }
 
-    public boolean checkItemIsCompleted(ToDoClass item) {
-        //  Helper method has been called if the user selects an item in the list
-        //  The method just returns the boolean value for the item being completed
-        return item.getCompleted();
+    private void selectionSortByDate(int i, int j, ToDoClass item1, ToDoClass item2){
+        //  Set the dates to be a string with the hyphens removed so they can be compared
+        int tempFirst = parseInt(item1.getToDoDate().toString().replace("-", ""));
+        int tempItemJ = parseInt(item2.getToDoDate().toString().replace("-", ""));
+        //  if the date of current first is greater than the date of the item at j,
+        //  swap them
+        if ((tempFirst > tempItemJ) && (!item2.getCompleted()))
+            Collections.swap(list, i, j);
     }
+
 
     public void fillNamesList(ObservableList<String> names, ToDoList list){
-        String complete = "incomplete";
+        String listViewFormat = "%35s%50s%50s";
+        String complete;
         for (ToDoClass i: list.getList()) {
             if (i.getCompleted()) {
                 complete = "completed";
             }
-            names.add(String.format("%40s", i.getToDoName()) + String.format("%200s", ":") +
-                    i.getToDoDate() + String.format("%50s", ":" + complete));
+            else
+                complete = "incomplete";
+            names.add(String.format(listViewFormat, i.getToDoName(),":" + i.getToDoDate(), ":" + complete));
         }
     }
 }

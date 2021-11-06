@@ -1,4 +1,15 @@
 Get Milk:2021-08-07:Go to the grocery store and get milk:complete
 Assignment:2021-11-11-07:Finish application assignment 1:incomplete
 Call Dermatologist:2022-11-11:Call that guy:incomplete
-Sneeze on peasants: 1348-06-05:Spread smallpox to the people in the middle ages:completed
+Sneeze on peasants:1348-06-05:Spread smallpox to the people in the middle ages:completed
+File for unemployment:2008-04-04:Probably cry about selling your house to some rich landlord:incomplete
+Item 6:2142-03-09:Search for the USSR:complete
+Item 7:800-03-09:Pay Money for the existing in US:incomplete
+Item 8:1212-03-09:Fight for the Horde:complete
+Item 9:1242-03-09:Know the enigma that is javaFX for the USSR:complete
+Item 10:2141-03-09:How do you do this one:incomplete
+Item 11:2144-03-09:Play Killer Instinct 4:complete
+Item 12:5542-03-09:Choke on unbreathable mars air:complete
+Item 13:3342-03-09:Do something:complete
+Item 14:0001-01-01:Celebrate the new year:incomplete
+Item 15:2042-03-09:Despacito:complete

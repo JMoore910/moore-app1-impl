@@ -18,8 +18,20 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="baseline.FXMLController">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="baseline.FXMLController">
    <children>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <ImageView fitHeight="140.0" fitWidth="1260.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@super.gif" />
+               </image>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </ImageView>
+         </children>
+      </HBox>
       <Text fx:id="currentDate" strokeType="OUTSIDE" strokeWidth="0.0" text="(Get Today's Date from Method)">
          <font>
             <Font size="24.0" />
@@ -32,7 +44,7 @@
                   <Image url="@pic1.png" />
                </image>
             </ImageView>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="To Do List ">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Jeanne's To Do List ">
                <font>
                   <Font size="48.0" />
                </font>
@@ -50,12 +62,12 @@
             <TextField fx:id="itemNameField" promptText="&lt;Item Name&gt;" />
             <DatePicker fx:id="itemDate" promptText="&lt;Due Date&gt;" />
             <TextField fx:id="itemDescField" promptText="&lt;Short Description&gt;" />
-            <Button fx:id="addItemButton" alignment="CENTER" mnemonicParsing="false" onAction="#add" text="Add Item">
+            <Button fx:id="addButton" alignment="CENTER" mnemonicParsing="false" onAction="#add" text="Add Item">
                <HBox.margin>
                   <Insets left="190.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="editItemButton" mnemonicParsing="false" onAction="#edit" text="Edit Item" />
+            <Button fx:id="editButton" mnemonicParsing="false" onAction="#edit" text="Edit Item" />
          </children>
          <padding>
             <Insets left="10.0" />
@@ -66,6 +78,7 @@
           <Button fx:id="changeViewCurrentButton" mnemonicParsing="false" onAction="#viewCurrent" text="   Current  " />
             <Button fx:id="changeViewCompletedButton" mnemonicParsing="false" onAction="#viewCompleted" text="Completed" />
             <Button fx:id="changeViewAllButton" mnemonicParsing="false" onAction="#viewAll" prefHeight="25.0" prefWidth="77.0" text="All Items" />
+            <Button fx:id="sortButton" mnemonicParsing="false" onAction="#sort" prefHeight="25.0" prefWidth="74.0" text="Sort" />
         </items>
          <VBox.margin>
             <Insets />
@@ -74,6 +87,7 @@
       <GridPane alignment="CENTER" prefHeight="20.0" prefWidth="621.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
@@ -90,9 +104,14 @@
                   <Font size="21.0" />
                </font>
             </Text>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Completed" GridPane.columnIndex="2" GridPane.halignment="CENTER">
+               <font>
+                  <Font size="21.0" />
+               </font>
+            </Text>
          </children>
       </GridPane>
-      <ListView fx:id="listView" onMouseClicked="#seeSelectedItem" prefHeight="200.0" prefWidth="200.0" />
+      <ListView fx:id="listView" nodeOrientation="LEFT_TO_RIGHT" onMouseClicked="#seeSelectedItem" prefHeight="200.0" prefWidth="200.0" />
       <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
          <children>
             <DialogPane fx:id="descriptionPane" contentText="No Items Selected Yet" headerText="        Item Description" />
@@ -121,6 +140,7 @@
             <HBox prefHeight="30.0" prefWidth="1200.0" spacing="20.0">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Enter text file name to load or save list to" />
+                  <TextField fx:id="filePathField" promptText="&lt;file//path//&gt;" />
                   <TextField fx:id="fileNameField" prefHeight="25.0" prefWidth="181.0" promptText="&lt;filename.txt&gt;" />
                   <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadList" text="Load" />
                </children>
@@ -138,5 +158,14 @@
       </VBox>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="COP3330 Fall 2021 Application Assignment 1 Design" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="©Copyright 2021 Jeanne Moore" />
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="1202.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@nintendo1.jpg" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
    </children>
 </VBox>
