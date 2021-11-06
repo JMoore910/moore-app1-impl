@@ -5,26 +5,37 @@ package baseline;
  *  Copyright 2021 Jeanne Moore
  */
 
+import java.time.*;
+import java.util.GregorianCalendar;
+
 public class ToDoClass {
     //  class holds data structure of the name and date of a to-do
     //  item. To dos are read by the FXML controller
 
+
     private String toDoName;
-    private String toDoDate;
+    private static LocalDate toDoDate;
     private String toDoDesc;
     private boolean completed;
 
-    public ToDoClass(String toDoName, String toDoDate, String toDoDesc, String completed){
+    public ToDoClass(){
+
+    }
+
+    public ToDoClass(String toDoName, String toDoDesc, boolean completed) {
+        this.toDoName = toDoName;
+        this.toDoDesc = toDoDesc;
+        this.completed = completed;
+    }
+
+    public ToDoClass(String toDoName, LocalDate toDoDate, String toDoDesc, boolean completed){
         this.toDoDate = toDoDate;
         this.toDoName = toDoName;
         this.toDoDesc = toDoDesc;
-        if (completed.equals("completed"))
-            this.completed = true;
-        else
-            this.completed = false;
+        this.completed = completed;
     }
 
-    public String getToDoDate() {
+    public LocalDate getToDoDate() {
         return toDoDate;
     }
 
