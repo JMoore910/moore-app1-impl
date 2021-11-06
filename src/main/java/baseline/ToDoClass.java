@@ -14,7 +14,7 @@ public class ToDoClass {
 
 
     private String toDoName;
-    private static LocalDate toDoDate;
+    private LocalDate toDoDate;
     private String toDoDesc;
     private boolean completed;
 
@@ -33,6 +33,13 @@ public class ToDoClass {
         this.toDoName = toDoName;
         this.toDoDesc = toDoDesc;
         this.completed = completed;
+    }
+
+    public ToDoClass(ToDoClass item) {
+        toDoName = item.toDoName;
+        toDoDate = item.toDoDate;
+        toDoDesc = item.toDoDesc;
+        completed = item.completed;
     }
 
     public LocalDate getToDoDate() {

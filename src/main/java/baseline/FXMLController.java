@@ -8,14 +8,18 @@ package baseline;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
 import static java.lang.Integer.parseInt;
@@ -45,9 +49,8 @@ public class FXMLController implements Initializable {
     private final ObservableList<String> toDoNames = FXCollections.observableArrayList();
     //  One list storing class "ToDoList" stores all data within a list
     private final ToDoList todos = new ToDoList();
-    private int selectedIndex = 0;
     private final String incomp = "incomplete";
-
+    private int selectedIndex = 0;
 
     @FXML
     private ResourceBundle resources;
@@ -110,34 +113,51 @@ public class FXMLController implements Initializable {
     private TextField itemNameField;
 
     @FXML
-    private ListView<String> toDoList;
+    private ListView<String> listView;
 
 
+    @FXML void seeSelectedItem(MouseEvent event) {
+        //  If an item is seleted, change the content of the description box
+        //  And change checkbox to reflect completed or not
+        if (listView.getSelectionModel().getSelectedIndex() != -1) {
+            selectedIndex = listView.getSelectionModel().getSelectedIndex();
+            completedCheckBox.setSelected(todos.getList().get(selectedIndex).getCompleted());
+            descriptionPane.setContentText(todos.searchList(Arrays.asList(listView.getSelectionModel()
+                    .getSelectedItem().split(":")).get(0).trim()).getToDoDesc());
+        }
+    }
 
 
-    @FXML void checkBoxClicked(ActionEvent event) {
+    @FXML void checkBoxClicked(MouseEvent event) {
         //  if the checkbox is clicked,
         //  todos is then searched for the item, which is returned as a ToDoClass object
-        ToDoClass item = todos.getList().get(selectedIndex);
-        todos.markItemComplete(todos.getList(), item);
-        resetListView();
+        if (selectedIndex != -1) {
+            ToDoClass item = todos.getList().get(selectedIndex);
+            todos.markItemComplete(todos.getList(), item);
+            listView.getItems().clear();
+            todos.fillNamesList(toDoNames, todos);
+            listView.refresh();
+        }
     }
+
 
     @FXML void remove(ActionEvent event) {
         //      get selected item
         //  todos is then searched for the item, which is returned as a ToDoClass object
-        if (selectedIndex >= 0) {
-            int index = selectedIndex;
-            todos.removeItem(todos.getList(), todos.getList().get(index));
-            //  Remove selected item from todos
-            toDoList.getItems().remove(toDoList.getSelectionModel().getSelectedItem());
+        if ((selectedIndex != -1) && (todos.getList().isEmpty())) {
+            //  Remove selected item from todos and the listView
+            todos.setList(todos.removeItem(todos.getList(),selectedIndex));
+            listView.getSelectionModel().select(selectedIndex - 1);
+            listView.getItems().remove(selectedIndex);
         }
     }
 
 
     @FXML void add(ActionEvent event) {
         //  Create Strings to hole text field data
-        toDoList.getItems().clear();
+        listView.getItems().clear();
+        if (!toDoNames.isEmpty())
+            toDoNames.clear();
         String name = itemNameField.getText();
         String desc = itemDescField.getText();
         itemNameField.clear();
@@ -146,8 +166,10 @@ public class FXMLController implements Initializable {
         if (!desc.isEmpty() && !name.isEmpty()) {
             desc = (String.format("%1.256s", desc));
             //  add item to todos list
+            item.setToDoDesc(desc);
             todos.addItem(todos.getList(), item);
-            resetListView();
+            todos.fillNamesList(toDoNames,todos);
+            listView.refresh();
         }
     }
 
@@ -155,9 +177,9 @@ public class FXMLController implements Initializable {
     @FXML void clear(ActionEvent event) {
         //Call a method within ToDoList class to clear its list
         todos.clearList();
-        resetListView();
+        toDoNames.clear();
+        listView.refresh();
     }
-
 
 
     @FXML void edit(ActionEvent event) {
@@ -165,7 +187,6 @@ public class FXMLController implements Initializable {
         //  and date from datePicker
         String name = itemNameField.getText();
         String desc = itemDescField.getText();
-        String completed = "incomplete";
         LocalDate date = itemDate.getValue();
         itemNameField.clear();
         itemDescField.clear();
@@ -216,32 +237,47 @@ public class FXMLController implements Initializable {
 
 
     @FXML
-    void ViewCurrent(ActionEvent event) {
-        //Changes view so that user is looking at todos list
-        System.out.println("Changed to current todos");
-        // clear toDoList and set its items to be the todos list
-        // set view to be todos(0)
+    void viewCurrent(ActionEvent event) {
+        //  Changes view so that user is looking at incomplete list
+        // clear listView and set its items to be the todos list
+        listView.getItems().clear();
+        String complete = "incomplete";
+        for (ToDoClass i : todos.getList()) {
+            if (!i.getCompleted()) {
+                toDoNames.add(String.format("%40s", i.getToDoName()) + String.format("%200s", ":") +
+                        i.getToDoDate() + String.format("%50s", ":" + complete));
+            }
+        }
+        listView.refresh();
     }
 
     @FXML
     void viewCompleted(ActionEvent event) {
-        //Changes view so the viewer is looking at completed list
-        System.out.println("Changed to completed todos");
-        //  clear toDoList and set its items to be the completed list within list of lists
-        //  set view to be todos(1)
+        //  Changes view so the user is looking at completed list
+        //  clear listView
+        listView.getItems().clear();
+        String complete = "completed";
+        for (ToDoClass i : todos.getList()) {
+            if (i.getCompleted()) {
+                toDoNames.add(String.format("%40s", i.getToDoName()) + String.format("%200s", ":") +
+                        i.getToDoDate() + String.format("%50s", ":" + complete));
+            }
+        }
+        listView.refresh();
     }
 
     @FXML
     void viewAll(ActionEvent event) {
         //Changes view so the viewer is looking at completed list
-        System.out.println("Changed to completed todos");
-        //  clear toDoList and set its items to be the completed list within list of lists
-        //  set view to be todos.get(0) + todos.get(1)  (current and completed todos)
+        //  clear listView and set its items to be the full list
+        listView.getItems().clear();
+        todos.fillNamesList(toDoNames,todos);
+        listView.refresh();
     }
 
 
     public void resetListView() {
-        toDoList.getItems().clear();
+
         toDoNames.removeAll();
         String complete;
         for (ToDoClass item : todos.getList()) {
@@ -252,9 +288,7 @@ public class FXMLController implements Initializable {
                 complete = "incomplete";
 
             toDoNames.add(String.format("%40s", item.getToDoName()) + String.format("%200s", ":") + item.getToDoDate() + String.format("%50s", ":" + complete));
-
-            toDoList.setItems(toDoNames);
-            System.out.println("Long haul");
+            listView.refresh();
         }
     }
 
@@ -262,18 +296,12 @@ public class FXMLController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //  Set a default value for the DatePicker
-        resetListView();
+
+        listView.setItems(toDoNames);
         setCurrentDate();
         itemDate.setValue(LocalDate.of(2021,11,1));
         //  Check if each item is completed or not
 
-        toDoList.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> {
-                    //  Listener used to find item that user picks in list for removal or marking to complete
-                    selectedIndex = toDoList.getSelectionModel().getSelectedIndex();
-                    descriptionPane.setContentText(todos.getList().get(selectedIndex).getToDoDesc());
-                    completedCheckBox.setSelected(todos.getList().get(selectedIndex).getCompleted());
-                }
-        );
+
     }
 }

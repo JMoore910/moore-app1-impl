@@ -26,6 +26,10 @@ public class ToDoList {
         return list;
     }
 
+    public void setList(List<ToDoClass> list){
+        this.list = list;
+    }
+
 
 
     public ToDoClass searchList(String search) {
@@ -38,10 +42,11 @@ public class ToDoList {
     }
 
 
-    public void removeItem(List<ToDoClass> list, ToDoClass item) {
+    public List<ToDoClass> removeItem(List<ToDoClass> list, int index) {
         //  Helper method for removing an item
         //  Called by event method
-        list.remove(item);
+        list.remove(list.get(index));
+        return list;
     }
 
 
@@ -100,5 +105,16 @@ public class ToDoList {
         //  Helper method has been called if the user selects an item in the list
         //  The method just returns the boolean value for the item being completed
         return item.getCompleted();
+    }
+
+    public void fillNamesList(ObservableList<String> names, ToDoList list){
+        String complete = "incomplete";
+        for (ToDoClass i: list.getList()) {
+            if (i.getCompleted()) {
+                complete = "completed";
+            }
+            names.add(String.format("%40s", i.getToDoName()) + String.format("%200s", ":") +
+                    i.getToDoDate() + String.format("%50s", ":" + complete));
+        }
     }
 }

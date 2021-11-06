@@ -63,7 +63,7 @@
       </HBox>
       <ToolBar nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="600.0">
         <items>
-          <Button fx:id="changeViewCurrentButton" mnemonicParsing="false" onAction="#ViewCurrent" text="   Current  " />
+          <Button fx:id="changeViewCurrentButton" mnemonicParsing="false" onAction="#viewCurrent" text="   Current  " />
             <Button fx:id="changeViewCompletedButton" mnemonicParsing="false" onAction="#viewCompleted" text="Completed" />
             <Button fx:id="changeViewAllButton" mnemonicParsing="false" onAction="#viewAll" prefHeight="25.0" prefWidth="77.0" text="All Items" />
         </items>
@@ -92,7 +92,7 @@
             </Text>
          </children>
       </GridPane>
-      <ListView fx:id="toDoList" prefHeight="200.0" prefWidth="200.0" />
+      <ListView fx:id="listView" onMouseClicked="#seeSelectedItem" prefHeight="200.0" prefWidth="200.0" />
       <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
          <children>
             <DialogPane fx:id="descriptionPane" contentText="No Items Selected Yet" headerText="        Item Description" />
@@ -104,7 +104,7 @@
                         <Button fx:id="clearListButton" mnemonicParsing="false" onAction="#clear" text="Clear List" />
                      </children>
                   </HBox>
-                  <CheckBox fx:id="completedCheckBox" mnemonicParsing="false" onAction="#checkBoxClicked" text="Item Completed">
+                  <CheckBox fx:id="completedCheckBox" mnemonicParsing="false" onMouseClicked="#checkBoxClicked" text="Item Completed">
                      <padding>
                         <Insets top="5.0" />
                      </padding>
