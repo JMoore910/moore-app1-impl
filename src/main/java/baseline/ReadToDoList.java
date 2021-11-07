@@ -15,7 +15,6 @@ import java.util.List;
 
 public class ReadToDoList {
     public ToDoList readFromFile(String fileName, ToDoList todos) {
-        fileName = fileName;
         todos.getList().clear();
         //  Create a list of Strings
         List<String> list;

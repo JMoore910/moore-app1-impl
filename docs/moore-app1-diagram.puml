@@ -1,0 +1,126 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+'/*
+' *  UCF COP3330 Summer 2021 Application Assignment 1 Solution
+' *  Copyright 2021 Jeanne Moore
+' */
+
+class FXMLController {
+application globals
+-TODOS: ToDoList
+-TODONAMES: ObservableList<String>
+-listViewFormat: String
+-selectedIndex: int
+
+application UI
++initLists(): void
+-resources: ResourceBundle
+-location: URL
+-addButton: Button
+-removeButton: Button
+-clearListButton: Button
+-changeViewCompleteButton: Button
+-changeViewCurrentButton: Button
+-changeViewAllButton: Button
+-loadButton: Button
+-saveButton: Button
+-editButton: Button
+-sortButton: Button
+
+-completedCheckBox: CheckBox
+
+-itemDescField: TextField
+-itemDateField: TextField
+-itemNameField: TextField
+-fileNameField: TextField
+-filePathField: TextField
+
+-currentDate: Text
+-descriptionPane: DialogPane
+-toDoList: ListView<String>
+
+seeSelectedItem(MouseEvent ListView clicked): void
+checkBoxClicked(MouseEvent completedCheckBox): void
+add(ActionEvent addItemButton): void
+remove(ActionEvent removeButton): void
+clear(ActionEvent )
+edit(ActionEvent editItemButton): void
+saveList(ActionEvent saveButton): void
+loadList(ActionEvent loadButton): void
+viewAll(ActionEvent changeViewAllButton): void
+viewCurrent(ActionEvent changeViewCurrentButton): void
+viewComplete(ActionEvent changeViewCompleteButton): void
+setCurrentDate(): void
+
++initialize(URL location, ResourceBundle resources): void
+}
+
+class ToDoListApplication extends javafx.application.Application{
++start(Stage stage): void
++main():void
+}
+
+class ToDoList {
+-list: List<ToDoClass>
++getList(): List<ToDoClass>
++setList(List<ToDoClass> list): void
++searchList(String search): ToDoClass
++removeItem(List<ToDoClass> list), int index): List<ToDoClass>
++addItem(List<ToDoClass> list), ToDoClass oldItem, ToDoClass newItem, int index): void
++markItemComplete(List<ToDoClass> list, ToDoClass item): void
++clearList(): void
++sortToDoByDate(): void
++selectionSortByDate(int i, int j, ToDoClass item1, ToDoClass item2): void
++fillNamesList(ObservableList<String> names, ToDoList list): void
+}
+
+class ToDoClass {
+-toDoName: String
+-toDoDate: LocalDate
+-toDoDesc: String
+-completed: boolean
+
++getToDoName(): String
++getToDoDate(): LocalDate
++getToDoDesc(): String
++getCompleted(): boolean
+
++setToDoDesc(String toDoDesc): void
++setCompleted(boolean completed): void
+}
+
+
+class ReadFromFile {
++readFromFile(String fileName, ToDoList todos): void
+}
+
+class WriteToFile {
++writeToFile(String fileName, ToDoList todos): void
+}
+
+file ToDoApp.fxml {
+}
+
+file stylesheet1.css {
+}
+
+ToDoListApplication -- ToDoApp.fxml
+ToDoListApplication -- stylesheet1.css
+ToDoApp.fxml -- FXMLController
+
+
+
+FXMLController --o ToDoList
+FXMLController --o ReadFromFile
+FXMLController --o WriteToFile
+FXMLController --o ToDoClass
+
+ToDoList --o ToDoClass
+ReadFromFile .. ToDoList
+ReadFromFile -- ToDoClass
+WriteToFile .. ToDoList
+WriteToFile -- ToDoClass
+
+
+@enduml

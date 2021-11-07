@@ -5,93 +5,182 @@ package baseline;
  *  Copyright 2021 Jeanne Moore
  */
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.time.LocalDate;
+
 class ToDoListApplicationTest {
     //  Create a static final object ReadToDoList reader
+    static final ReadToDoList reader = new ReadToDoList();
+    static final WriteToDoList writer = new WriteToDoList();
+    static final ObservableList<String> testNameList = FXCollections.observableArrayList();
+    static int removeIndex;
+    static ToDoList testToDos = new ToDoList();
+
+
 
     //Test Cases to create:
     //  ReadToDoList -- readToDoList
-    //  use a test input file to read from, then check to see if an expected item name is found in the list
-    //  void test_file_reader(){
-    //      test file in docs is used to test program's read from file methods
-    //      Call reader.readToDoList to read from the test input file getting a list as a result
-    //      Assert that the values being read in form a list, and the list contains a to do activity specified in file
-    //  }
+    @Test
+    void test_read_file() {
+        String fileName = "docs//testInput.txt";
+        //  use a test input file to read from, then check to see if an expected item name is found in the list
+        //  test file in docs is used to test program's read from file method
+        testToDos = new ToDoList(reader.readFromFile(fileName, testToDos).getList());
+        //  Call reader.readToDoList to read from the test input file getting a list as a result
+        //  Assert that the values being read in form a list, and the list contains a todoactivity specified in file
+        assertEquals("Item 10",testToDos.getList().get(9).getToDoName());
+    }
 
 
     //  WriteToDoList -- writeToDoList
-    //  use a test output file to check and see if the file specified exists
-    //  void test_output_file(){
-    //    create an object ReadToDoList reader and make it read a file testInput.txt
-    //    assign the reader method's output to a test list
-    //    create an object WriteToDoList writer and make it write a file testOutput.txt with test list
-    //    assert the file exists to be true
-    //  }
+    @Test
+    void test_write_file() {
+        String fileName = "docs//testOutput.txt";
+        File testFile = new File(fileName);
+        //  use a test output file to check and see if the file specified exists
+        //  write a file testOutput.txt with test list
+        writer.writeToFile(fileName, testToDos);
+        //  assert the file exists to be true
+        assertTrue(testFile.exists());
+    }
 
 
-    //  SortToDoByDate -- sortToDoByDate
-    //  the list that was read in is then sorted, and for loop goes through to check if it is sorted properly by dates
-    //  void test_list_sorter(){
-    //    create an object ReadToDoList reader and make it read from the test input file
-    //    set a flag boolean sorted for checking if the list is sorted, initialize it to be true
-    //    getting a list as a result
-    //    create an object SortToDoByDate sorter and make it sort
-    //    User sorter.sortToDoByDate to sort the list by due date\
-    //    create an object ToDoClass lower and construct it with blank string arguments and 0000-00-00 as date
-    //    Enter a for each loop and traverse the list, creating a loop variable ToDoClass current
-    //      parse lower.date and current.date by dashes and check each part in two lists of strings lowDate and curDate
-    //      if the year of lower is greater,  (ParseInt(lowDate(0)) > ParseInt(curDate(0)))
-    //          sorted = false, break
-    //      else if the years are equal,
-    //          if the month of lower is greater,
-    //              sorted = false, break
-    //          else if the months are equal,
-    //              if the day of lower is greater,
-    //                  sorted = false, break
-    //              in the case of the days being equal, no action is taken, the list is sorted to this point
-    //    Assert that sorted is true
-    //  }
+    //  ToDoList -- sortToDoByDate
+    @Test
+    void test_sort_list() {
+        //  Within the larger application, the list is sorted twice in order to get all completed items out of the way
+        testToDos.sortToDoByDate();
+        testToDos.sortToDoByDate();
+        testToDos.sortToDoByDate();
+        //    set a flag boolean sorted for checking if the list is sorted, initialize it to be true
+        boolean sorted = true;
+        //    getting a list as a result
+        //    create an object ToDoClass lower and construct it with blank string arguments and 0000-00-00 as date
+        ToDoClass lower = new ToDoClass("a", LocalDate.of(0,1,1),"b",false);
+        //    Enter a for each loop and traverse the list, creating a loop variable ToDoClass current
+        //      parse lower.date and current.date by dashes and check each part in two lists of strings lowDate and curDate
+        //      if the year of lower is greater,  (ParseInt(lowDate(0)) > ParseInt(curDate(0)))
+        for (ToDoClass current: testToDos.getList()) {
+            if (current.getCompleted()) {
+                //  Checks if current has reached the completed items, which are not sorted
+                break;
+            } else if ((lower.getToDoDate().getYear()) > current.getToDoDate().getYear()) {
+                sorted = false;
+                break;
+            } else if (lower.getToDoDate().getYear() == current.getToDoDate().getYear()) {
+                if (lower.getToDoDate().getMonthValue() > current.getToDoDate().getMonthValue()) {
+                    sorted = false;
+                    break;
+                } else if (lower.getToDoDate().getMonthValue() == current.getToDoDate().getMonthValue()) {
+                    if (lower.getToDoDate().getDayOfMonth() > current.getToDoDate().getDayOfMonth()) {
+                        sorted = false;
+                        break;
+                    }
+                }
+                //  in the case of the days being equal, no action is taken, the list is sorted to this point
+            }
+                lower = current;
+        }
+        //  Assert that sorted is true
+        assertTrue(sorted);
+    }
 
 
     //  ToDoClass -- constructor
-    //  After the constructor is called to create a ToDoClass item
-    //  assert that those are set with getters, test with get desc
-    //  void test_todo_class(){
-    //      ToDoClass toDoTest = new ToDoClass("ToDo1","0000-00-00","ToDo1desc")
-    //      assert toDoTest.getToDoDesc and "ToDo1desc" are equal
-    //  }
+    @Test
+    void test_toDoClass_constructor() {
+        //  After the constructor is called to create a ToDoClass item
+        //  assert that those are set with getters, test with get desc
+        ToDoClass testItem = new ToDoClass("Test", LocalDate.of(1,2,3),"TestDesc",true);
+        //      ToDoClass toDoTest = new ToDoClass("ToDo1","0000-00-00","ToDo1desc")
+        //      assert toDoTest.getToDoDesc and "TestDesc" are equal
+        assertEquals("TestDesc", testItem.getToDoDesc());
+    }
 
-    //  create a static final object FXMLController controller
-    //  create a static final ObservableList<ToDoClass> testList and set it equal to reader.readToDoList(testInput.txt)
-    //  create a static final toDoClass testItem = new ToDoClass(Itemname,Itemdate,Itemdesc)
+    //  ToDoList -- addItem
+    @Test
+    void test_add() {
+        //  Add an item to a list
+        //  then use searchList to check if it is found in the list
+        ToDoClass item = new ToDoClass("Test", LocalDate.of(1,2,3),"TestDesc",true);
+        testToDos.addItem(testToDos.getList(),item);
+        removeIndex = testToDos.getList().indexOf(item);
+        //  assert the item is found in a list search
+        assertEquals(item.getToDoName(),testToDos.searchList("Test").getToDoName());
+    }
 
-    //  FXMLController -- addItem
-    //  take in an ObservableList and a selected item, then add the item to the list (addItem())
-    //  then use a for loop to check if the item is in the list and assert that it is found
-    //  void test_add_item(){
-    //      make a boolean flag found and set it to false
-    //      controller.addItem(testItem)
-    //      enter a for each loop and check to see if the name of the current item in loop equals testItem
-    //          if found, found = true, break
-    //      assert found is true
-    //  }
+    //  ToDoList -- removeItem
+    @Test
+    void test_remove() {
+        //  remove an item from a list
+        //  then use !testToDos.contains to check if the list contains the removed item
+        ToDoClass item = new ToDoClass("Test", LocalDate.of(1,2,3),"TestDesc",true);
+        testToDos.removeItem(testToDos.getList(),removeIndex);
+        //  assert the item is not contained in the list anymore
+        assertFalse(testToDos.getList().contains(item));
+    }
 
-    //  after addItem, use checkItemIsCompleted to just check and see if the item is in the list
-    //  FXMLController -- checkItemIsCompleted
-    //  take in an ObservableList and a selected item, then check to see if the item is found in the list
-    //  void testCheckComplete(){
-    //     assert (checkItemIsCompleted(testList, testItem)) is True
-    //  }
 
-    //  FXMLController -- removeItem
-    //  take in an ObservableList and a selected item, then remove the item from the list (removeItem())
-    //  then use a for loop to check if the item is still in the list and assert it is not found
-    //  void test_remove_item(){
-    //      make a boolean flag found and set it to false
-    //      controller.removeItem(testItem)
-    //      enter a for each loop and check to see if the name of the current item in loop equals testItem
-    //          if found, found = true, break
-    //      assert found is false
-    //  }
+    //  ToDoList -- searchList
+    @Test
+    void test_search_list() {
+        ToDoClass item = new ToDoClass("Test", LocalDate.of(1,2,3),"TestDesc",true);
+        testToDos.addItem(testToDos.getList(),item);
+        //  call searchList passing in item.getToDoName() as argument
+        //  assert the returned value is equal to item.getToDoName()
+        assertEquals(item,testToDos.searchList(item.getToDoName()));
+    }
 
-    //  All other methods in FXMLController rely upon button press and user interaction
+    //  ToDoList -- editItem and searchList
+    @Test
+    void test_edit_item() {
+        //  call editItem passing list, oldItem, newItem, int index
+        ToDoClass oldItem = new ToDoClass("Test", LocalDate.of(1,2,3),"TestDesc",true);
+        testToDos.addItem(testToDos.getList(),oldItem);
+        ToDoClass newItem = new ToDoClass("Test", LocalDate.of(1,2,3),"NewTestDesc",true);
+        testToDos.editItem(testToDos.getList(),oldItem,newItem,testToDos.getList().indexOf(oldItem));
+        //  then assert the list contains the new version of the item
+        assertEquals(newItem.getToDoDesc(),testToDos.searchList(oldItem.getToDoName()).getToDoDesc());
+    }
+
+    //  ToDoList -- markItemComplete
+    @Test
+    void test_mark_complete() {
+        //  call markItemComplete passing list and incomplete item as arguments
+        ToDoClass item = new ToDoClass(
+                "File for second unemployment",
+                LocalDate.of(2008,6,4),
+                "Probably cry about selling your house to another rich landlord",
+                false
+        );
+        testToDos.addItem(testToDos.getList(),item);
+        testToDos.markItemComplete(testToDos.getList(),item);
+        //  then assert the item in the list is complete
+        assertTrue(testToDos.searchList("File for second unemployment").getCompleted());
+    }
+
+    //  ToDoList -- fillNamesList
+    @Test
+    void test_fill_names_list() {
+        //  call fillNamesList passing an empty observable list and a ToDoList
+        testToDos.fillNamesList(testNameList,testToDos);
+        //  then assert that the size of the observable list equals todos.getList() size
+        assertEquals(testToDos.getList().size(),testNameList.size());
+    }
+
+
+    //  ToDoList -- clearItem
+    @Test
+    void test_clear() {
+        //  call clear list
+        testToDos.clearList();
+        //  assert the list is empty
+        assertTrue(testToDos.getList().isEmpty());
+    }
 }

@@ -23,7 +23,7 @@ import javafx.scene.text.Text;
 public class FXMLController implements Initializable {
     private final ObservableList<String> toDoNames = FXCollections.observableArrayList();
     //  One list storing class "ToDoList" stores all data within a list
-    private final String listViewFormat = "%35s%50s%50s";
+    private static final String LIST_VIEW_FORMAT = "%35s%50s%50s";
     private ToDoList todos = new ToDoList();
     private int selectedIndex = 0;
 
@@ -124,6 +124,7 @@ public class FXMLController implements Initializable {
             todos.setList(todos.removeItem(todos.getList(),selectedIndex));
             listView.getItems().remove(selectedIndex);
             selectedIndex --;
+            descriptionPane.setContentText("");
             listView.getSelectionModel().select(selectedIndex);
             listView.refresh();
         }
@@ -153,6 +154,9 @@ public class FXMLController implements Initializable {
             todos.addItem(todos.getList(), item);
             todos.fillNamesList(toDoNames,todos);
             listView.refresh();
+        } else {
+            todos.fillNamesList(toDoNames,todos);
+            listView.refresh();
         }
     }
 
@@ -176,6 +180,7 @@ public class FXMLController implements Initializable {
         //  Call a method within ToDoList class to clear its list
         todos.clearList();
         //  Clear Observable List
+        descriptionPane.setContentText("");
         toDoNames.clear();
         listView.refresh();
     }
@@ -198,7 +203,8 @@ public class FXMLController implements Initializable {
                 new ToDoClass(name,date,desc, item.getCompleted()),
                 todos.getList().indexOf(item)
         );
-        listView.refresh();
+        toDoNames.clear();
+        todos.fillNamesList(toDoNames,todos);
     }
 
 
@@ -209,7 +215,7 @@ public class FXMLController implements Initializable {
         if (fileName.endsWith(".txt")) {
             //  Make a new WriteToDoList object
             WriteToDoList writer = new WriteToDoList();
-            writer.writeToDoList(fileName,todos);
+            writer.writeToFile(fileName,todos);
         }
     }
 
@@ -232,7 +238,7 @@ public class FXMLController implements Initializable {
     @FXML void setCurrentDate() {
         //      get current date
         LocalDate today = LocalDate.now();
-        currentDate.setText(today.toString());
+        currentDate.setText(today.getMonth() + " " + today.getDayOfMonth() + ", " + today.getYear());
     }
 
 
@@ -245,7 +251,7 @@ public class FXMLController implements Initializable {
         for (ToDoClass i : todos.getList()) {
             if (!i.getCompleted()) {
                 toDoNames.add(String.format(
-                        listViewFormat,
+                        LIST_VIEW_FORMAT,
                         i.getToDoName(),
                         ":" + i.getToDoDate(),
                         ":" + complete)
@@ -264,7 +270,7 @@ public class FXMLController implements Initializable {
         for (ToDoClass i : todos.getList()) {
             if (i.getCompleted()) {
                 toDoNames.add(String.format(
-                        listViewFormat,
+                        LIST_VIEW_FORMAT,
                         i.getToDoName(),
                         ":" + i.getToDoDate(),
                         ":" + complete)

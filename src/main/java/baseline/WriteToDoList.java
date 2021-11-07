@@ -10,8 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class WriteToDoList {
-    public void writeToDoList(String fileName, ToDoList todos) {
-        fileName = "docs//" + fileName;
+    public void writeToFile(String fileName, ToDoList todos) {
         String completed;
         //  method opens a new file at fileName with a buffered writer
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {

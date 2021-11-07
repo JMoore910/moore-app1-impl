@@ -22,7 +22,7 @@
    <children>
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
-            <ImageView fitHeight="140.0" fitWidth="1260.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="140.0" fitWidth="1202.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@super.gif" />
                </image>
@@ -112,12 +112,12 @@
          </children>
       </GridPane>
       <ListView fx:id="listView" nodeOrientation="LEFT_TO_RIGHT" onMouseClicked="#seeSelectedItem" prefHeight="200.0" prefWidth="200.0" />
-      <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+      <HBox prefHeight="101.0" prefWidth="1200.0" spacing="20.0">
          <children>
-            <DialogPane fx:id="descriptionPane" contentText="No Items Selected Yet" headerText="        Item Description" />
-            <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="700.0" spacing="20.0">
+            <DialogPane fx:id="descriptionPane" contentText="No Items Selected Yet" headerText="        Item Description" minHeight="-Infinity" minWidth="-Infinity" prefHeight="113.0" prefWidth="809.0" />
+            <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="388.0" spacing="20.0">
                <children>
-                  <HBox prefHeight="100.0" prefWidth="400.0" spacing="20.0">
+                  <HBox nodeOrientation="RIGHT_TO_LEFT" prefHeight="100.0" prefWidth="190.0" spacing="20.0">
                      <children>
                         <Button fx:id="removeButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#remove" prefHeight="25.0" prefWidth="90.0" text="Remove Item" />
                         <Button fx:id="clearListButton" mnemonicParsing="false" onAction="#clear" text="Clear List" />
@@ -135,7 +135,7 @@
             </HBox>
          </children>
       </HBox>
-      <VBox prefHeight="100.0" prefWidth="1161.0">
+      <VBox prefHeight="65.0" prefWidth="1200.0">
          <children>
             <HBox prefHeight="30.0" prefWidth="1200.0" spacing="20.0">
                <children>
@@ -145,9 +145,9 @@
                   <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadList" text="Load" />
                </children>
             </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+            <HBox prefHeight="32.0" prefWidth="1200.0" spacing="20.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Selecting save will save current list to file, load will load a list from file                " />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Selecting save will save current list to file, load will load a list from file                " wrappingWidth="586.798828125" />
                   <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveList" text="Save" />
                </children>
                <VBox.margin>
@@ -156,7 +156,7 @@
             </HBox>
          </children>
       </VBox>
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="COP3330 Fall 2021 Application Assignment 1 Design" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="COP3330 Fall 2021 Application Assignment 1" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="©Copyright 2021 Jeanne Moore" />
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
