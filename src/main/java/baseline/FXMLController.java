@@ -5,6 +5,8 @@ package baseline;
  *  Copyright 2021 Jeanne Moore
  */
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -18,6 +20,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
 
 public class FXMLController implements Initializable {
@@ -25,6 +28,7 @@ public class FXMLController implements Initializable {
     //  One list storing class "ToDoList" stores all data within a list
     private static final String LIST_VIEW_FORMAT = "%35s%50s%50s";
     private ToDoList todos = new ToDoList();
+    private File choice;
     private int selectedIndex = 0;
 
     @FXML
@@ -64,10 +68,16 @@ public class FXMLController implements Initializable {
     private Button saveButton;
 
     @FXML
+    private Button fileChooserButton;
+
+    @FXML
     private CheckBox completedCheckBox;
 
     @FXML
     private Text currentDate;
+
+    @FXML
+    private Text fileText;
 
     @FXML
     private DialogPane descriptionPane;
@@ -89,6 +99,17 @@ public class FXMLController implements Initializable {
 
     @FXML
     private ListView<String> listView;
+
+
+    @FXML void fileChooser(ActionEvent event) {
+        FileChooser fc = new FileChooser();
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files","*.txt"));
+        choice = fc.showOpenDialog(null);
+
+        if (choice != null){
+            fileText.setText(choice.getName());
+        }
+    }
 
 
     @FXML void seeSelectedItem(MouseEvent event) {
@@ -209,28 +230,43 @@ public class FXMLController implements Initializable {
 
 
     @FXML void saveList(ActionEvent event) {
-        //  get fileName from filename text field
-        String fileName = filePathField.getText() + fileNameField.getText();
-        //  Make sure user did not specify a text file name
-        if (fileName.endsWith(".txt")) {
-            //  Make a new WriteToDoList object
-            WriteToDoList writer = new WriteToDoList();
-            writer.writeToFile(fileName,todos);
+        //  Use filechooser to get file to save to
+        //  or get fileName from filename text field
+        String fileName;
+        WriteToDoList writer = new WriteToDoList();
+        if (choice != null) {
+            //  Implement fileChoice here
+            fileName = choice.getAbsolutePath();
+            writer.writeToFile(fileName, todos);
+        } else {
+            fileName = filePathField.getText() + fileNameField.getText();
+            //  Make sure user did not specify a text file name
+            if (fileName.endsWith(".txt")) {
+                writer.writeToFile(fileName, todos);
+            }
         }
     }
 
 
     @FXML void loadList(ActionEvent event) {
         //  get fileName from filename text field
-        String fileName = filePathField.getText() + fileNameField.getText();
-        //  Make sure user did not specify a text file name
-        if (fileName.endsWith(".txt")) {
-            //  Make a new ReadToDoList object
-            ReadToDoList reader = new ReadToDoList();
-            todos = new ToDoList(reader.readFromFile(fileName,todos).getList());
+        String fileName;
+        ReadToDoList reader = new ReadToDoList();
+        if (choice != null) {
+            //  Make sure user did not specify a text file name
+            fileName = choice.getAbsolutePath();
+            todos = new ToDoList(reader.readFromFile(fileName, todos).getList());
             toDoNames.clear();
-            todos.fillNamesList(toDoNames,todos);
+            todos.fillNamesList(toDoNames, todos);
             listView.refresh();
+        } else {
+            fileName = filePathField.getText() + fileNameField.getText();
+            if (fileName.endsWith(".txt")) {
+                todos = new ToDoList(reader.readFromFile(fileName, todos).getList());
+                toDoNames.clear();
+                todos.fillNamesList(toDoNames, todos);
+                listView.refresh();
+            }
         }
     }
 

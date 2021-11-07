@@ -143,6 +143,8 @@
                   <TextField fx:id="filePathField" promptText="&lt;file//path//&gt;" />
                   <TextField fx:id="fileNameField" prefHeight="25.0" prefWidth="181.0" promptText="&lt;filename.txt&gt;" />
                   <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadList" text="Load" />
+                  <Button fx:id="fileChooserButton" mnemonicParsing="false" onAction="#fileChooser" text="Choose File" />
+                  <Text fx:id="fileText" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="399.0" />
                </children>
             </HBox>
             <HBox prefHeight="32.0" prefWidth="1200.0" spacing="20.0">
