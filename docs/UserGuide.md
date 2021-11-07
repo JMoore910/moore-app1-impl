@@ -2,7 +2,9 @@
 <br />
 This guide is meant to SUPPLEMENT the video guide created for this application. <br />
 Please prioritize viewing that to get a better grasp of the utilization of this to do list <br />
-application. A number of image visual guides are also included within the repository
+application. A number of image visual guides are also included within the repository <br />
+
+https://youtu.be/1DqGNZhsFrI
 
 When first starting up the application, the user has the option of adding items to an empty list, or loading a list from file <br />
 
