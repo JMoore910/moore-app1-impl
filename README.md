@@ -1,4 +1,4 @@
-                                           To Do list user guide, by Jeanne Moore
+                                     To Do list user guide, by Jeanne Moore
 <br />
 This guide is meant to SUPPLEMENT the video guide created for this application. <br />
 Please prioritize viewing that to get a better grasp of the utilization of this to do list <br />
